@@ -54,8 +54,8 @@ public class Graph {
 
     public void printGraph() {
         for (int i = 0; i < vertexs.length; i++) {
-            Vertex vertex = vertexs[i];
-            ListLinked<Edge> eLinked = vertex.getEdges();
+            //Vertex vertex = vertexs[i];
+            //ListLinked<Edge> eLinked = vertex.getEdges();
             
         }
     }
@@ -110,7 +110,7 @@ public class Graph {
             scanner.close();
 
         } catch (FileNotFoundException e) {
-            // TODO: handle exception
+            System.err.println(e.getMessage());
         }
 
         /*
