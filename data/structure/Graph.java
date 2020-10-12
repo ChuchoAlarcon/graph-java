@@ -2,6 +2,8 @@ package data.structure;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -52,12 +54,55 @@ public class Graph {
         }
     }
 
-    public void printGraph() {
-        for (int i = 0; i < vertexs.length; i++) {
-            //Vertex vertex = vertexs[i];
-            //ListLinked<Edge> eLinked = vertex.getEdges();
-            
+    public void BFS(Vertex vertex) {
+        ListLinked<Vertex> travelBFS = new ListLinked<>();
+        Queue<Vertex> queue = new LinkedList<>();
+        queue.add(vertex);
+        vertex.setStatus(State.VISITADO);
+        travelBFS.add(vertex);
+        while (!queue.isEmpty()) {
+            vertex = queue.poll();
+            ListLinked<Edge> lEdges = vertex.getEdges();
+            Node<Edge> node = lEdges.getHead();
+            while (node != null) {
+                Vertex opposite = node.getData().getV2();
+                if (opposite.getState() == State.NO_VISITADO) {
+                    queue.add(opposite);
+                    opposite.setStatus(State.VISITADO);
+                    travelBFS.add(opposite);
+                }
+                node = node.getLink();
+            }
+            vertex.setStatus(State.PROCESADO);
         }
+
+        Node<Vertex> temp = travelBFS.getHead();
+        while (temp != null) {
+            System.out.println(temp.getData().getLabel());
+            temp = temp.getLink();
+        }
+    }
+
+    public void DFS() {
+
+    }
+
+    public void printGraph() {
+        ListLinked<Edge> edges;
+        String output = "";
+        for (int i = 0; i < vertexs.length; i++) {
+            Vertex vertex = vertexs[i];
+            output = output + vertex.getLabel();
+            edges = vertex.getEdges();
+            output = output + "(" + edges.size() + ") -> ";
+            Node<Edge> temp = edges.getHead();
+            while (temp != null) {
+                output = output + "{" + temp.getData().getV2().getLabel() + "} ";
+                temp = temp.getLink();
+            }
+            output = output + "\n";
+        }
+        System.out.println(output);
     }
 
     public void readFileInput(String filename) {

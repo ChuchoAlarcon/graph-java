@@ -1,12 +1,27 @@
 package data.structure;
 
+
+
 public class Vertex {
     private String label;
     private ListLinked<Edge> edges;
+    private State state;
+    // 1
+    // 2
+    // 3
 
     public Vertex(String label) {
         this.label = label;
         edges = new ListLinked<>();
+        state = State.NO_VISITADO;
+    }
+
+    public void setStatus(State state) {
+        this.state = state;
+    }
+
+    public State getState() {
+        return state;
     }
 
     public void addEdge(Edge edge) {
