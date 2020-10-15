@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Scanner;
+import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -54,31 +55,63 @@ public class Graph {
         }
     }
 
-    public void BFS(Vertex vertex) {
+    public void DFS(Vertex vertex) {
         ListLinked<Vertex> travelBFS = new ListLinked<>();
-        Queue<Vertex> queue = new LinkedList<>();
-        queue.add(vertex);
+        // Queue<Vertex> queue = new LinkedList<>();// estructura de datos cola
+        Stack<Vertex> stack = new Stack<>();
+        stack.push(vertex);
         vertex.setStatus(State.VISITADO);
         travelBFS.add(vertex);
-        while (!queue.isEmpty()) {
-            vertex = queue.poll();
+        while (!stack.isEmpty()) {
+            vertex = stack.pop();// vertice padre
             ListLinked<Edge> lEdges = vertex.getEdges();
             Node<Edge> node = lEdges.getHead();
             while (node != null) {
-                Vertex opposite = node.getData().getV2();
+                Vertex opposite = node.getData().getV2();// vertices hijos
                 if (opposite.getState() == State.NO_VISITADO) {
-                    queue.add(opposite);
+                    stack.add(opposite);
                     opposite.setStatus(State.VISITADO);
+
+                    opposite.setJumps(vertex.getJumps() + 1);
                     travelBFS.add(opposite);
                 }
                 node = node.getLink();
             }
             vertex.setStatus(State.PROCESADO);
         }
-
         Node<Vertex> temp = travelBFS.getHead();
         while (temp != null) {
-            System.out.println(temp.getData().getLabel());
+            System.out.print(temp.getData().getLabel() + "{" + temp.getData().getJumps() + "}\t");
+            temp = temp.getLink();
+        }
+    }
+
+    public void BFS(Vertex vertex) {
+        ListLinked<Vertex> travelBFS = new ListLinked<>();
+        Queue<Vertex> queue = new LinkedList<>();// estructura de datos cola
+        queue.add(vertex);
+        vertex.setStatus(State.VISITADO);
+        travelBFS.add(vertex);
+        while (!queue.isEmpty()) {
+            vertex = queue.poll();// vertice padre
+            ListLinked<Edge> lEdges = vertex.getEdges();
+            Node<Edge> node = lEdges.getHead();
+            while (node != null) {
+                Vertex opposite = node.getData().getV2();// vertices hijos
+                if (opposite.getState() == State.NO_VISITADO) {
+                    queue.add(opposite);
+                    opposite.setStatus(State.VISITADO);
+
+                    opposite.setJumps(vertex.getJumps() + 1);
+                    travelBFS.add(opposite);
+                }
+                node = node.getLink();
+            }
+            vertex.setStatus(State.PROCESADO);
+        }
+        Node<Vertex> temp = travelBFS.getHead();
+        while (temp != null) {
+            System.out.print(temp.getData().getLabel() + "{" + temp.getData().getJumps() + "}\t");
             temp = temp.getLink();
         }
     }

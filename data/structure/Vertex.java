@@ -1,19 +1,25 @@
 package data.structure;
 
-
-
 public class Vertex {
     private String label;
     private ListLinked<Edge> edges;
     private State state;
-    // 1
-    // 2
-    // 3
+    private int jumps;
+    // private Vertex parent;
 
     public Vertex(String label) {
         this.label = label;
+        this.jumps = 0;
         edges = new ListLinked<>();
         state = State.NO_VISITADO;
+    }
+
+    public int getJumps() {
+        return jumps;
+    }
+
+    public void setJumps(int jumps) {
+        this.jumps = jumps;
     }
 
     public void setStatus(State state) {
