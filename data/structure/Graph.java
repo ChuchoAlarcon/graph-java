@@ -16,14 +16,30 @@ public class Graph {
     private Vertex[] vertexs;
     private int numVertexs;
 
+    private boolean isConnected;
+    private int componentConnected;
+
     public Graph(boolean directed) {
         this.directed = directed;
+        isConnected = false;
+        componentConnected = 0;
         vertexList = new ListLinked<>();
     }
 
     public Graph(boolean directed, int numVertexs) {
         this.directed = directed;
+        isConnected = false;
+        componentConnected = 0;
         vertexs = new Vertex[numVertexs];
+    }
+
+    public boolean isConnected() {
+        BFS();
+        return isConnected;
+    }
+
+    public int getComponentConnected() {
+        return componentConnected;
     }
 
     public boolean getDirected() {
@@ -101,7 +117,7 @@ public class Graph {
                 if (opposite.getState() == State.NO_VISITADO) {
                     queue.add(opposite);
                     opposite.setStatus(State.VISITADO);
-
+                    opposite.setParent(vertex);
                     opposite.setJumps(vertex.getJumps() + 1);
                     travelBFS.add(opposite);
                 }
@@ -109,11 +125,69 @@ public class Graph {
             }
             vertex.setStatus(State.PROCESADO);
         }
-        Node<Vertex> temp = travelBFS.getHead();
-        while (temp != null) {
-            System.out.print(temp.getData().getLabel() + "{" + temp.getData().getJumps() + "}\t");
-            temp = temp.getLink();
+        /*
+         * Node<Vertex> temp = travelBFS.getHead(); while (temp != null) {
+         * System.out.print(temp.getData().getLabel() + "{" + temp.getData().getJumps()
+         * + "}\t"); temp = temp.getLink(); }
+         */
+    }
+
+    public void BFS() {
+        Node<Vertex> iterator = vertexList.getHead();
+        isConnected = false;
+        while (iterator != null) {
+            Vertex vertex = iterator.getData();
+            if (vertex.getState().compareTo(State.NO_VISITADO) == 0) {
+                BFS(vertex);
+                componentConnected++;
+                isConnected = componentConnected == 1;
+            }
+            iterator = iterator.getLink();
         }
+    }
+
+    public void shortesPaths() {
+        BFS(vertexList.getHead().getData());
+        System.out.println("Caminos cortos");
+        for (int i = 0; i < vertexs.length; i++) {
+            String route = printShortPath(getShortPath(vertexs[i]));
+            System.out.println(vertexs[i].getLabel() + "(" + vertexs[i].getJumps() + "): " + route);
+        }
+    }
+
+    public void shortPath(Vertex start, Vertex finish) {
+        BFS(start);
+        Stack<Vertex> shortPath = getShortPath(finish);
+        printShortPath(shortPath);
+    }
+
+    public String printShortPath(Stack<Vertex> shortPath) {
+        String output = "";
+        if (!shortPath.isEmpty()) {
+            while (!shortPath.isEmpty()) {
+                output += shortPath.pop().getLabel();
+                if (shortPath.size() >= 1) {
+                    output += " -> ";
+                }
+            }
+        } else {
+            output += "Sin caminos cortos, vertice aislado";
+        }
+        // output += "\n";
+        return output;
+    }
+
+    public Stack<Vertex> getShortPath(Vertex vertex) {
+        Stack<Vertex> shortPath = new Stack<>();
+        Vertex parent = vertex.getParent();
+        if (parent != null) {
+            shortPath.push(vertex);
+            while (parent != null) {
+                shortPath.push(parent);
+                parent = parent.getParent();
+            }
+        }
+        return shortPath;
     }
 
     public void DFS() {
