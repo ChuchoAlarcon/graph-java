@@ -6,12 +6,32 @@ public class Vertex {
     private State state;
     private int jumps;
     private Vertex parent;
+    private int tiemEntry;
+    private int tiemExit;
 
     public Vertex(String label) {
         this.label = label;
         this.jumps = 0;
+        this.tiemEntry = 0;
+        this.tiemExit = 0;
         edges = new ListLinked<>();
         state = State.NO_VISITADO;
+    }
+
+    public void setTimeEntry(int timeEntry) {
+        this.tiemEntry = timeEntry;
+    }
+
+    public void setTimeExit(int timeExit) {
+        this.tiemExit = timeExit;
+    }
+
+    public int getTimeEntry() {
+        return tiemEntry;
+    }
+
+    public int getTimeExit() {
+        return tiemExit;
     }
 
     public void setParent(Vertex parent) {

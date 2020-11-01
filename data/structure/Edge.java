@@ -4,11 +4,20 @@ public class Edge {
     private Vertex v1;
     private Vertex v2;
     private double weight;
+    private TypeEdge type;
 
     public Edge(Vertex v1, Vertex v2, double weight) {
         this.v1 = v1;
         this.v2 = v2;
         this.weight = weight;
+    }
+
+    public void setType(TypeEdge type) {
+        this.type = type;
+    }
+
+    public TypeEdge getType() {
+        return type;
     }
 
     public Edge(Vertex v1, Vertex v2) {
@@ -34,6 +43,7 @@ public class Edge {
     }
 
     public String toString() {
-        return "Edge={v1={" + v1.getLabel() + "},v2={" + v2.getLabel() + "},weight={" + weight + "}}";
+        return "Edge={v1={" + v1.getLabel() + "},v2={" + v2.getLabel() + "},weight={" + weight + "},Type={" + type
+                + "}}";
     }
 }

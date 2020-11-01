@@ -18,10 +18,12 @@ public class Graph {
 
     private boolean isConnected;
     private int componentConnected;
+    private int time;
 
     public Graph(boolean directed) {
         this.directed = directed;
         isConnected = false;
+        time = 0;
         componentConnected = 0;
         vertexList = new ListLinked<>();
     }
@@ -71,7 +73,7 @@ public class Graph {
         }
     }
 
-    public void DFS(Vertex vertex) {
+    public void DFS_Stack(Vertex vertex) {
         ListLinked<Vertex> travelBFS = new ListLinked<>();
         // Queue<Vertex> queue = new LinkedList<>();// estructura de datos cola
         Stack<Vertex> stack = new Stack<>();
@@ -146,6 +148,42 @@ public class Graph {
         }
     }
 
+    public void DFS(Vertex vertex, ListLinked<Vertex> travelDFS) {
+        vertex.setStatus(State.VISITADO);
+        travelDFS.add(vertex);
+        vertex.setTimeEntry(time);
+        time++;
+        Node<Edge> nEdge = vertex.getEdges().getHead();
+        while (nEdge != null) {
+            Vertex oppositeVertex = nEdge.getData().getV2();
+            if (oppositeVertex.getState().compareTo(State.NO_VISITADO) == 0) {
+                nEdge.getData().setType(TypeEdge.TREE);
+                System.out.println(nEdge.getData());
+                DFS(oppositeVertex, travelDFS);
+            } else if (oppositeVertex.getState().compareTo(State.PROCESADO) == 0) {
+                nEdge.getData().setType(TypeEdge.LATER);
+                System.out.println(nEdge.getData());
+            }
+            nEdge = nEdge.getLink();
+        }
+        vertex.setStatus(State.PROCESADO);
+        vertex.setTimeExit(time);
+        time++;
+    }
+
+    public void DFS(Vertex vertexStart) {
+        ListLinked<Vertex> travelDFS = new ListLinked<>();
+        time = 0;
+        DFS(vertexStart, travelDFS);
+        Node<Vertex> nVertex = travelDFS.getHead();
+        while (nVertex != null) {
+            Vertex vertex = nVertex.getData();
+            System.out.println(vertex.getLabel() + " i(" + vertex.getTimeEntry() + ") o(" + vertex.getTimeExit()
+                    + ") state(" + vertex.getState() + ")");
+            nVertex = nVertex.getLink();
+        }
+    }
+
     public void shortesPaths() {
         BFS(vertexList.getHead().getData());
         System.out.println("Caminos cortos");
@@ -188,10 +226,6 @@ public class Graph {
             }
         }
         return shortPath;
-    }
-
-    public void DFS() {
-
     }
 
     public void printGraph() {
