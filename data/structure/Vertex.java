@@ -1,6 +1,6 @@
 package data.structure;
 
-public class Vertex {
+public class Vertex implements Comparable<Vertex> {
     private String label;
     private ListLinked<Edge> edges;
     private State state;
@@ -8,14 +8,24 @@ public class Vertex {
     private Vertex parent;
     private int tiemEntry;
     private int tiemExit;
+    private double dijkstraValue;
 
     public Vertex(String label) {
         this.label = label;
         this.jumps = 0;
         this.tiemEntry = 0;
         this.tiemExit = 0;
+        dijkstraValue = 0;
         edges = new ListLinked<>();
         state = State.NO_VISITADO;
+    }
+
+    public void setDijkstraValue(double dijkstraValue) {
+        this.dijkstraValue = dijkstraValue;
+    }
+
+    public double getDijkstraValue() {
+        return dijkstraValue;
     }
 
     public void setTimeEntry(int timeEntry) {
@@ -77,5 +87,14 @@ public class Vertex {
 
     public String toString() {
         return "Vertex={label={" + label + "},edges={" + edges + "}}";
+    }
+
+    @Override
+    public int compareTo(Vertex v) {
+        if (v.getDijkstraValue() < getDijkstraValue()) {
+            return 1;
+        } else {
+            return -1;
+        }
     }
 }

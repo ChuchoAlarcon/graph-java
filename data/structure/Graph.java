@@ -3,6 +3,7 @@ package data.structure;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.LinkedList;
+import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Scanner;
 import java.util.Stack;
@@ -14,6 +15,7 @@ public class Graph {
     // private boolean weighted;
     private ListLinked<Vertex> vertexList;
     private Vertex[] vertexs;
+    private ListLinked<Edge> edgesList;
     private int numVertexs;
 
     private boolean isConnected;
@@ -26,6 +28,7 @@ public class Graph {
         time = 0;
         componentConnected = 0;
         vertexList = new ListLinked<>();
+        edgesList = new ListLinked<>();
     }
 
     public Graph(boolean directed, int numVertexs) {
@@ -67,9 +70,11 @@ public class Graph {
     public void addEdge(Vertex v1, Vertex v2, double weight) {
         Edge edge = new Edge(v1, v2, weight);
         v1.addEdge(edge);
+        edgesList.add(edge);
         if (!directed) {
             Edge edge2 = new Edge(v2, v1, weight);
             v2.addEdge(edge2);
+            edgesList.add(edge2);
         }
     }
 
@@ -181,6 +186,57 @@ public class Graph {
             System.out.println(vertex.getLabel() + " i(" + vertex.getTimeEntry() + ") o(" + vertex.getTimeExit()
                     + ") state(" + vertex.getState() + ")");
             nVertex = nVertex.getLink();
+        }
+    }
+
+    public void Dijkstra(Vertex vertex) {
+        vertex.setStatus(State.VISITADO);
+        PriorityQueue<Vertex> queue = new PriorityQueue<>();
+        queue.offer(vertex);
+        while (!queue.isEmpty()) {
+            Vertex minWeightVertex = queue.poll();
+            minWeightVertex.setStatus(State.PROCESADO);
+            // System.out.println(minWeightVertex.getLabel() + " " +
+            // minWeightVertex.getState());
+            Node<Edge> nEdge = minWeightVertex.getEdges().getHead();
+            while (nEdge != null) {
+                Edge edge = nEdge.getData();
+                Vertex opposite = edge.getV2();
+                double pathCost = edge.getWeight() + minWeightVertex.getDijkstraValue();
+
+                if (opposite.getState().compareTo(State.NO_VISITADO) == 0) {
+                    opposite.setStatus(State.VISITADO);
+                    opposite.setDijkstraValue(pathCost);
+                    opposite.setParent(minWeightVertex);
+                    queue.offer(opposite);
+                } else if (opposite.getState().compareTo(State.VISITADO) == 0) {
+                    if (opposite.getDijkstraValue() > pathCost) {
+                        opposite.setDijkstraValue(pathCost);
+                        opposite.setParent(minWeightVertex);
+                    }
+                }
+                System.out.println(opposite.getLabel() + " " + opposite.getState() + " " + opposite.getDijkstraValue());
+                nEdge = nEdge.getLink();
+            }
+        }
+    }
+
+    public void showVertexs() {
+        Node<Vertex> nVertex = vertexList.getHead();
+        while (nVertex != null) {
+            Vertex vertex = nVertex.getData();
+            System.out.println("Vertex={" + vertex.getLabel() + "}, state={" + vertex.getState() + "}, dijkstra={"
+                    + vertex.getDijkstraValue() + "}");
+            nVertex = nVertex.getLink();
+        }
+    }
+
+    public void showEdges() {
+        Node<Edge> nEdge = edgesList.getHead();
+        while (nEdge != null) {
+            Edge edge = nEdge.getData();
+            System.out.println(edge);
+            nEdge = nEdge.getLink();
         }
     }
 

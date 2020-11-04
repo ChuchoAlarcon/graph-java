@@ -9,6 +9,7 @@ public class Edge {
     public Edge(Vertex v1, Vertex v2, double weight) {
         this.v1 = v1;
         this.v2 = v2;
+        this.type = TypeEdge.NONE;
         this.weight = weight;
     }
 
