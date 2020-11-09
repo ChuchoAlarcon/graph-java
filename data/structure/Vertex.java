@@ -6,18 +6,47 @@ public class Vertex implements Comparable<Vertex> {
     private State state;
     private int jumps;
     private Vertex parent;
-    private int tiemEntry;
-    private int tiemExit;
+    private int timeEntry;
+    private int timeExit;
     private double dijkstraValue;
+    private int treeOutDegree;
+    private Vertex reachableAncestor;
+    private TypeVertex type;
 
     public Vertex(String label) {
         this.label = label;
         this.jumps = 0;
-        this.tiemEntry = 0;
-        this.tiemExit = 0;
+        this.timeEntry = 0;
+        this.timeExit = 0;
+        this.treeOutDegree = 0;
         dijkstraValue = 0;
         edges = new ListLinked<>();
         state = State.NO_VISITADO;
+        type = TypeVertex.NONE;
+    }
+
+    public void setType(TypeVertex type) {
+        this.type = type;
+    }
+
+    public TypeVertex getType() {
+        return type;
+    }
+
+    public void setTreeOutDegree(int treeOutDegree) {
+        this.treeOutDegree = treeOutDegree;
+    }
+
+    public int getTreeOutDegree() {
+        return treeOutDegree;
+    }
+
+    public void setReachableAncestor(Vertex reachableAncestor) {
+        this.reachableAncestor = reachableAncestor;
+    }
+
+    public Vertex getReachableAncestor() {
+        return reachableAncestor;
     }
 
     public void setDijkstraValue(double dijkstraValue) {
@@ -29,19 +58,19 @@ public class Vertex implements Comparable<Vertex> {
     }
 
     public void setTimeEntry(int timeEntry) {
-        this.tiemEntry = timeEntry;
+        this.timeEntry = timeEntry;
     }
 
     public void setTimeExit(int timeExit) {
-        this.tiemExit = timeExit;
+        this.timeExit = timeExit;
     }
 
     public int getTimeEntry() {
-        return tiemEntry;
+        return timeEntry;
     }
 
     public int getTimeExit() {
-        return tiemExit;
+        return timeExit;
     }
 
     public void setParent(Vertex parent) {

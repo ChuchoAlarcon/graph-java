@@ -158,18 +158,56 @@ public class Graph {
         travelDFS.add(vertex);
         vertex.setTimeEntry(time);
         time++;
+        vertex.setReachableAncestor(vertex);
         Node<Edge> nEdge = vertex.getEdges().getHead();
         while (nEdge != null) {
             Vertex oppositeVertex = nEdge.getData().getV2();
             if (oppositeVertex.getState().compareTo(State.NO_VISITADO) == 0) {
                 nEdge.getData().setType(TypeEdge.TREE);
-                System.out.println(nEdge.getData());
+                // Asignamos el vertice padre que descubre a un nuevo vertice
+                oppositeVertex.setParent(vertex);
+                // actualizamos el grado de cada vertice
+                vertex.setTreeOutDegree(vertex.getTreeOutDegree() + 1);
                 DFS(oppositeVertex, travelDFS);
-            } else if (oppositeVertex.getState().compareTo(State.PROCESADO) == 0) {
-                nEdge.getData().setType(TypeEdge.LATER);
-                System.out.println(nEdge.getData());
+            } else {
+                if (vertex.getParent() != null
+                        && vertex.getParent().getLabel().compareTo(oppositeVertex.getLabel()) != 0) {
+                    nEdge.getData().setType(TypeEdge.LATER);
+                    if (oppositeVertex.getTimeEntry() < vertex.getReachableAncestor().getTimeEntry()) {
+                        vertex.setReachableAncestor(oppositeVertex);
+                    }
+                }
             }
             nEdge = nEdge.getLink();
+        }
+        // verificamos si el vertice es la raiz y si tiene mas de un hijo
+        if (vertex.getParent() == null) {
+            if (vertex.getTreeOutDegree() > 1) {
+                // System.out.println("\nVertice raiz corte: " + vertex.getLabel() + "\n");
+                vertex.setType(TypeVertex.ROOT_CUTNODE);
+            }
+        }
+        // Si el vertice alcanzable desde v es el padre de v,
+        // entonces el padre es vertice de articulacion
+        else if (vertex.getReachableAncestor().getLabel().compareTo(vertex.getParent().getLabel()) == 0
+                && (vertex.getParent() != null)) {
+            // System.out.println("\nVertice padre corte: " + vertex.getLabel() + "\n");
+            vertex.setType(TypeVertex.PARENT_CUTNODE);
+        }
+        // vertice padre puente corte
+        else if (vertex.getReachableAncestor().getLabel().compareTo(vertex.getLabel()) == 0) {
+            vertex.getParent().setType(TypeVertex.BRIDGE_CUTNODE);
+            // vertice hijo no hoja
+            if (vertex.getTreeOutDegree() > 0) {
+                vertex.setType(TypeVertex.BRIDGE_CUTNODE);
+            }
+        }
+        if (vertex.getParent() != null) {
+            int time_vertex = vertex.getReachableAncestor().getTimeEntry();
+            int time_parent = vertex.getParent().getReachableAncestor().getTimeEntry();
+            if (time_vertex < time_parent) {
+                vertex.getParent().setReachableAncestor(vertex.getReachableAncestor());
+            }
         }
         vertex.setStatus(State.PROCESADO);
         vertex.setTimeExit(time);
@@ -183,8 +221,9 @@ public class Graph {
         Node<Vertex> nVertex = travelDFS.getHead();
         while (nVertex != null) {
             Vertex vertex = nVertex.getData();
-            System.out.println(vertex.getLabel() + " i(" + vertex.getTimeEntry() + ") o(" + vertex.getTimeExit()
-                    + ") state(" + vertex.getState() + ")");
+            System.out.println(vertex.getLabel() + "=> d(" + vertex.getTimeEntry() + "), f(" + vertex.getTimeExit()
+                    + "), state(" + vertex.getState() + "), degreeTree(" + vertex.getTreeOutDegree() + "), reachable("
+                    + vertex.getReachableAncestor().getLabel() + "), type(" + vertex.getType() + ")");
             nVertex = nVertex.getLink();
         }
     }
@@ -229,6 +268,10 @@ public class Graph {
                     + vertex.getDijkstraValue() + "}");
             nVertex = nVertex.getLink();
         }
+    }
+
+    public Vertex getVertexArticulation() {
+        return null;
     }
 
     public void showEdges() {
